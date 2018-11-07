@@ -3,6 +3,10 @@ import {StyleSheet, View} from 'react-native';
 import PlaceInput from './src/components/PlaceInput/PlaceInput';
 import PlaceList from "./src/components/PlaceList/PlaceList";
 import PlaceDetail from './src/components/PlaceDetail/PlaceDetail';
+import configureStore from "./src/store/configureStore";
+import {Provider} from "react-redux";
+
+const store = configureStore();
 
 export default class App extends React.Component {
     state = {
@@ -53,15 +57,17 @@ export default class App extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <PlaceDetail
-                    selectedPlace={this.state.selectedPlace}
-                    onItemDeleted={this.placeDeletedHandler}
-                    onModalClosed={this.modalClosedHandler}
-                />
-                <PlaceInput onPlaceAdded={this.placeAddedHandler}/>
-                <PlaceList places={this.state.places} onItemSelected={this.placeSelectedHandler}/>
-            </View>
+            <Provider store={store}>
+                <View style={styles.container}>
+                    <PlaceDetail
+                        selectedPlace={this.state.selectedPlace}
+                        onItemDeleted={this.placeDeletedHandler}
+                        onModalClosed={this.modalClosedHandler}
+                    />
+                    <PlaceInput onPlaceAdded={this.placeAddedHandler}/>
+                    <PlaceList places={this.state.places} onItemSelected={this.placeSelectedHandler}/>
+                </View>
+            </Provider>
         );
     }
 }
