@@ -1,25 +1,32 @@
 import React, {Component} from 'react';
 import {View, Image, Text, Button, StyleSheet, TouchableOpacity} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
+import {connect} from "react-redux";
+import {deletePlace} from "../../store/actions";
+import {withMappedNavigationAndConfigProps} from "react-navigation-props-mapper";
 
-export default class PlaceDetail extends Component {
-    static navigationOptions = ({navigation}) => {
+@withMappedNavigationAndConfigProps()
+class PlaceDetail extends Component {
+    static navigationOptions = ({navigation, title}) => {
         return {
-            title: navigation.getParam('title', 'PlaceDetail')
+            title: title
         };
     };
 
-    render() {
-        const selectedPlace = this.props.navigation.getParam('selectedPlace');
+    itemDeleteHandler = () => {
+      this.props.onDeletePlace(this.props.selectedPlace.key);
+      this.props.navigation.goBack();
+    };
 
+    render() {
         return (
             <View style={styles.container}>
                 <View>
-                    <Image source={selectedPlace.image} style={styles.placeImage}/>
-                    <Text style={styles.placeName}>{selectedPlace.name}</Text>
+                    <Image source={this.props.selectedPlace.image} style={styles.placeImage}/>
+                    <Text style={styles.placeName}>{this.props.selectedPlace.name}</Text>
                 </View>
                 <View>
-                    <TouchableOpacity onPress={this.props.onItemDeleted}>
+                    <TouchableOpacity onPress={this.itemDeleteHandler}>
                         <View style={styles.deleteButton}>
                             <Ionicons name="ios-trash" size={30} color="red"/>
                         </View>
@@ -48,3 +55,11 @@ const styles = StyleSheet.create({
         alignItems: "center"
     }
 });
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onDeletePlace: (key) => dispatch(deletePlace(key))
+    }
+};
+
+export default connect(null, mapDispatchToProps)(PlaceDetail);
